@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const onError = (res) => {
     if (res.ok) {
       return res.json()
@@ -6,65 +8,61 @@ const onError = (res) => {
     return Promise.reject(`Ошибка: ${res.status}`)
   }
   
-  export class Api {
+class Api {
     constructor(id) {
       // тело конструктора
       this.id = id
       this.url = "/api/twisters"
+      this.headers = {
+        'Accept': 'application/json'
+      }
     }
   
     // возвращает все скороговорки
     getTwisters() {
-      return fetch(`${this.id}/${this.url}/movies`, {
+      return fetch(`${this.id}${this.url}`, {
         method: 'GET',
+        headers: this.headers,
       }).then(onError)
     }
   
-    // возвращает скороговорки рамдомную скороговорку
+    // возвращает рандомную скороговорку
     getTwistersRandom() {
-      return fetch(`${this._url}/users/me`, {
+      // Формируем полный URL для запроса
+      const fullUrl = `${this.id}${this.url}/random`;
+      
+      // Выводим полный URL в консоль
+      console.log('ПОЛНЫЙ URL ЗАПРОСА:', fullUrl);
+      
+      return fetch(fullUrl, {
         method: 'GET',
-        headers: {
-          ...this._headers,
-          authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      }).then(onError)
+        headers: this.headers,
+      }).then(onError);
     }
   
-    // Редактирование профиля
-    setUserInfo(name, email) {
-      return fetch(`${this._url}/users/me`, {
-        method: 'PATCH',
-        headers: {
-          ...this._headers,
-          authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-        }),
+    // возвращает скороговорку по тегам
+    getTwistersByTags(tags) {
+      return fetch(`${this.id}${this.url}/tag/:${tags}`, {
+        method: 'GET',
+        headers: this.headers,
       }).then(onError)
     }
-  
-    // Удаление фильма
-    deleteCard(data) {
-      return fetch(`${this._url}/movies/${data._id}`, {
-        method: 'DELETE',
-        headers: {
-          ...this._headers,
-          authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        },
+
+    // возвращает скороговорку по сложности
+    getTwistersByDifficulty(difficulty) {
+      return fetch(`${this.id}${this.url}/difficulty/:${difficulty}`, {
+        method: 'GET',
+        headers: this.headers,
       }).then(onError)
     }
+
   }
   
   // создание экземпляра класса Api
-  const api = new Api({
-    baseUrl: 'https://api.movies-aksenov.nomoredomains.xyz',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const api = new Api(
+    process.env.API_IP,
+  )
   
-  export default api
+  module.exports = { Api, api };
+
   
