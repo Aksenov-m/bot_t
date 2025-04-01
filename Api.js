@@ -48,6 +48,26 @@ class Api {
       }).then(onError)
     }
 
+      // возвращает скороговорку по id
+      getTwistersById(id) {
+        return fetch(`${this.id}${this.url}/${id}`, {
+            method: 'GET',
+            headers: this.headers,
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (!data) {
+                throw new Error('Нет данных');
+            }
+            return data;
+        });
+    }
+
     // возвращает скороговорку по сложности
     getTwistersByDifficulty(difficulty) {
       return fetch(`${this.id}${this.url}/difficulty/:${difficulty}`, {

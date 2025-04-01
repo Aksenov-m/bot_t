@@ -22,6 +22,23 @@ bot.command('twister', (ctx) => {
         });
 });
 
+// Обработчик для всех цифр
+bot.hears(/^[0-9]+$/, (ctx) => {
+    api.getTwistersById(Number(ctx.message.text))
+    .then(data => {
+        // Проверяем, что data существует и содержит text
+        if (!data || !data.text) {
+            ctx.reply('Скороговорка не найдена');
+            return;
+        }
+        ctx.reply(data.text);
+    })
+    .catch(err => {
+        console.error(err);
+        ctx.reply('Произошла ошибка при получении скороговорки');
+    });
+});
+
 bot.on('message', async (ctx) => {
     await ctx.reply("извини, такой команды нет");
 });
