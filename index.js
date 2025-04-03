@@ -1,10 +1,28 @@
 const { api } = require('./api/Api.js');
 require('dotenv').config();
 const { Bot, InputFile, session, GrammyError, HttpError } = require('grammy');
-// Импортируем middleware для логирования (сначала нужно установить: npm install telegraf-middleware-console-time)
-
 
 const bot = new Bot(process.env.BOT_TOKEN);
+
+const count = async () => {
+  try {
+    const data = await api.getTwisters();
+    console.log('Данные скороговорок:', data);
+    
+    // Проверяем, что данные пришли и есть свойство length
+    if (data && Array.isArray(data)) {
+      return data.length;
+    } else if (data && data.twisters && Array.isArray(data.twisters)) {
+      return data.twisters.length;
+    } else {
+      console.log('Неожиданный формат данных:', data);
+      return 'недоступно';
+    }
+  } catch (err) {
+    console.error('Произошла ошибка при получении скороговорок:', err);
+    return 'недоступно';
+  }
+};
 
 // Добавляем логирование только в режиме разработки
 (async () => {
@@ -17,15 +35,20 @@ const bot = new Bot(process.env.BOT_TOKEN);
 
 const twisterText = (text)=>`<b>${text}</b>`;
 
+// Устанавливаем команды бота (без слешей)
 bot.api.setMyCommands([
     {
-        command: '/start',
-        description: 'Информация о боте'
+        command: 'start',
+        description: 'Старт бота'
     },
     {
-        command: '/twister',
+        command: 'twister',
         description: 'Получить случайную скороговорку'
-    }
+    },
+    {
+        command: 'help',
+        description: 'Информация о боте'
+    },
 ]);
 
 bot.use(async (ctx, next) => {
@@ -41,6 +64,19 @@ bot.use(async (ctx, next) => {
 bot.use(session());
 bot.command('start', (ctx) => {
     ctx.reply('Привет я бот, который поможет тебе с выбором скороговорки');
+});
+
+bot.command('help', async (ctx) => {
+    try {
+        const twistersCount = await count();
+        ctx.reply(`Бот отправляет случайную скороговорку по запросу пользователя, командой /twister. 
+Поиск скороговорки по номеру, можно отправить боту цифру, и он отправит скороговорку с таким номером. 
+Количество скороговорок: ${twistersCount}`);
+    } catch (err) {
+        console.error('Ошибка при получении количества скороговорок:', err);
+        ctx.reply(`Бот отправляет случайную скороговорку по запросу пользователя, командой /twister. 
+Поиск скороговорки по номеру, можно отправить боту цифру, и он отправит скороговорку с таким номером.`);
+    }
 });
 
 bot.command('twister', async (ctx) => {
