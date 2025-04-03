@@ -12,7 +12,8 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "grammy": "^1.35.1",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "telegraf-middleware-console-time": "^3.0.0"
   },
   "repository": {
     "type": "git",

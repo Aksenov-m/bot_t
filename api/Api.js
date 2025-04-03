@@ -32,7 +32,7 @@ class Api {
       const fullUrl = `${this.id}${this.url}/random`;
       
       // Выводим полный URL в консоль
-      console.log('ПОЛНЫЙ URL ЗАПРОСА:', fullUrl);
+      // console.log('ПОЛНЫЙ URL ЗАПРОСА:', fullUrl);
       
       return fetch(fullUrl, {
         method: 'GET',
