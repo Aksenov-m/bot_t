@@ -100,11 +100,14 @@ class Api {
   // возвращает user by id
   getUserById(id) {
     const url = `${this.id}/user/${id}`;
-    console.log('Запрос пользователя по URL:', url);
+    // console.log('Запрос пользователя по URL:', url);
     if (!id) return Promise.reject('Не указан ID пользователя');
     return fetch(url, {
-      method: 'GET',
+      method: 'POST',
       headers: this.headers,
+      body: JSON.stringify({
+        id: id,
+      }),
     }).then((res) => {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -117,6 +120,16 @@ class Api {
       }
       return data;
     });
+  }
+
+   // возвращаем количество пользователей
+   getUsersCount() {
+    // Формируем полный URL для запроса
+    const fullUrl = `${this.id}/user/count`;
+    return fetch(fullUrl, {
+      method: "GET",
+      headers: this.headers,
+    }).then(onError);
   }
 
   // возвращает скороговорку по сложности
@@ -132,4 +145,4 @@ class Api {
 // создание экземпляра класса Api
 const api = new Api(process.env.API_IP);
 
-module.exports = { Api, api }; 
+module.exports = { Api, api };
