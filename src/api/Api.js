@@ -103,11 +103,8 @@ class Api {
     // console.log('Запрос пользователя по URL:', url);
     if (!id) return Promise.reject('Не указан ID пользователя');
     return fetch(url, {
-      method: 'POST',
-      headers: this.headers,
-      body: JSON.stringify({
-        id: id,
-      }),
+      method: 'GET',
+      headers: this.headers
     }).then((res) => {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
